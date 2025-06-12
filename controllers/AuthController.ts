@@ -7,7 +7,6 @@ import { catchAsync, createError } from "../utils/errorHandler.js";
 
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
-    console.log( email, password );
     // 1) Check if email and password exist
     if (!email || !password) {
         return next(createError('Please provide email and password', 400));
@@ -59,7 +58,6 @@ export const register = catchAsync(async (req: Request, res: Response, next: Nex
 
     // 4) Generate token and send response
     const token = await generateToken(user._id as string);
-    console.log(' token', token);
     createSendCookie({ res, name: "jwt", value: token });
     
     // Remove password from output

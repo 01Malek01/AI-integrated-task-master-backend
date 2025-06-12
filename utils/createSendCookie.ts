@@ -31,9 +31,10 @@ const createSendCookie = ({
     const defaultOptions: CookieOptions = {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
         maxAge: 24 * 60 * 60 * 1000, // 1 day
-        path: "/"
+        path: "/",
+        domain: process.env.NODE_ENV === "development" ? 'localhost' : undefined
     };
 
     // Merge default options with provided options

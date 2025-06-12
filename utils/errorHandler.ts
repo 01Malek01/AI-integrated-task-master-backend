@@ -12,23 +12,45 @@ interface ErrorWithStatus extends Error {
 export { createError };
 
 export const globalErrorHandler = (err: ErrorWithStatus, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('Error:', err);
-
-  // Default status code
+  // Default status code and status
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  // Handle specific error types
-  if (err.name === 'ValidationError') {
-    const errors: Record<string, string> = {};
-    Object.values((err as any).errors).forEach((error: any) => {
-      errors[error.path] = error.message;
-    });
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Validation Error',
-      errors
-    });
+  // Log the error with stack trace in development
+  if (process.env.NODE_ENV === 'development') {
+    console.error('Error Stack:', err.stack);
+  }
+
+  // Handle validation errors
+  if (err.name === 'ValidationError' || err.code === 'VALIDATION_ERROR') {
+    // For express-validator errors that we formatted
+    if (err.errors) {
+      console.error('Validation Errors:', err.errors);
+      return res.status(err.statusCode).json({
+        status: 'fail',
+        message: err.message || 'Validation failed',
+        code: err.code,
+        errors: err.errors,
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+      });
+    }
+
+    // For Mongoose validation errors
+    if ((err as any).errors) {
+      const errors: Record<string, string> = {};
+      Object.values((err as any).errors).forEach((error: any) => {
+        errors[error.path] = error.message;
+      });
+      
+      console.error('Mongoose Validation Errors:', errors);
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Validation Error',
+        code: 'MONGOOSE_VALIDATION_ERROR',
+        errors,
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+      });
+    }
   }
 
   // Handle duplicate field errors (MongoDB)

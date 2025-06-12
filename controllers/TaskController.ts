@@ -36,7 +36,7 @@ export const getTaskById = asyncHandler(async (req: any, res: Response) => {
 // @route   POST /tasks
 // @access  Private
 export const createTask = asyncHandler(async (req: any, res: Response) => {
-    const { title, description, dueDate, priority, status } = req.body;
+    const { title, description, dueDate, priority, status, category } = req.body;
     
     const task = await Task.create({
         title,
@@ -44,7 +44,8 @@ export const createTask = asyncHandler(async (req: any, res: Response) => {
         dueDate: dueDate ? new Date(dueDate) : null,
         priority: priority || 'medium',
         status: status || 'todo',
-        user: req.user._id
+        user: req.user._id,
+        category 
     });
     
     res.status(201).json(task);
@@ -116,14 +117,16 @@ export const taskValidation = {
         body('description').optional(),
         body('dueDate').optional().isISO8601().withMessage('Invalid date format'),
         body('priority').optional().isIn(['low', 'medium', 'high']).withMessage('Invalid priority'),
-        body('status').optional().isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status')
+        body('status').optional().isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status'),
+        body('category').optional().isMongoId().withMessage('Invalid category ID')
     ],
     update: [
         body('title').optional().notEmpty().withMessage('Title cannot be empty'),
         body('description').optional(),
         body('dueDate').optional().isISO8601().withMessage('Invalid date format'),
         body('priority').optional().isIn(['low', 'medium', 'high']).withMessage('Invalid priority'),
-        body('status').optional().isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status')
+        body('status').optional().isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status') 
+        
     ],
     updateStatus: [
         body('status').isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status')

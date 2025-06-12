@@ -1,5 +1,8 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { globalErrorHandler } from './utils/errorHandler.js';
 import routeAggregator from './routes/index.js';
@@ -12,9 +15,23 @@ dotenv.config();
 const app = express();
 
 // Middleware
+
+// HTTP request logger middleware for node.js (development only)
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+app.use(cookieParser());
+
+// Parse application/json
+app.use(bodyParser.json());
+
+// Parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // CORS configuration
 const corsOptions = {
-  origin: (origin: string, callback: (arg0: Error | null, arg1: boolean | undefined) => void) => {
+  origin: (origin: string | undefined, callback: (err: Error | null, origin?: string | boolean) => void) => {
     // For development, allow requests from localhost:3000 with or without trailing slash
     const allowedOrigins = [
       'http://localhost:3000',
@@ -32,14 +49,16 @@ const corsOptions = {
     }
 
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
+      callback(null, origin); // Return the origin instead of true for dynamic origin
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Set-Cookie'],
+  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
