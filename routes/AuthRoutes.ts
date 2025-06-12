@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { login, register, logout } from '../controllers/AuthController';
+import { login, register, logout,checkAuth } from '../controllers/AuthController';
 import { validateRequest } from '../middleware/validation';
 import { body } from 'express-validator';
+import { protect } from '../middleware/protect';
 
 const router = Router();
 
@@ -46,4 +47,6 @@ router.post('/login', validateRequest(loginValidation), login);
 // POST /api/auth/logout - Logout user
 router.post('/logout', logout);
 
+// GET /api/auth/checkAuth - Check if user is authenticated
+router.get('/checkAuth', protect , checkAuth);
 export default router;

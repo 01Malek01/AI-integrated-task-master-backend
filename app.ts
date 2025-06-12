@@ -1,8 +1,9 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import routeAggregator from './routes/index.js';
 import { globalErrorHandler } from './utils/errorHandler.js';
+import routeAggregator from './routes/index.js';
+import rateLimit from 'express-rate-limit';
 
 // Load environment variables
 dotenv.config();
@@ -11,13 +12,49 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true
-}));
+// CORS configuration
+const corsOptions = {
+  origin: (origin: string, callback: (arg0: Error | null, arg1: boolean | undefined) => void) => {
+    // For development, allow requests from localhost:3000 with or without trailing slash
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3000/'
+    ];
+    
+    // In production, you can add your production domain here
+    if (process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL) {
+      allowedOrigins.push(process.env.FRONTEND_URL);
+      if (process.env.FRONTEND_URL.endsWith('/')) {
+        allowedOrigins.push(process.env.FRONTEND_URL.slice(0, -1));
+      } else {
+        allowedOrigins.push(`${process.env.FRONTEND_URL}/`);
+      }
+    }
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// Routes
+//TODO :  apply rate limiter for login and other routes. apply CSRF protection and other security middlewares
+
+// Rate limiter
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use('/api/auth/login', limiter);
+app.use('/api/auth/register', limiter);
+  // Routes
 app.use('/api', routeAggregator);
 
 // 404 handler

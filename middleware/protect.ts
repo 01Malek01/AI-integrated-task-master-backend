@@ -13,7 +13,7 @@ declare global {
 }
 
 interface JwtPayload {
-  id: string;
+  userId: string;
 }
 
 const protect = asyncHandler(
@@ -21,23 +21,22 @@ const protect = asyncHandler(
     let token: string | undefined;
 
     if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
+    req.cookies &&
+    req.cookies['jwt']  || req.headers.authorization && req.headers.authorization.startsWith('Bearer ')
     ) {
       try {
-        // Get token from header
-        token = req.headers.authorization.split(' ')[1];
 
+        token = req.cookies?.jwt || req.headers.authorization?.split(' ')[1] || '';
         if (!process.env.JWT_SECRET) {
           res.status(500);
           throw new Error('JWT_SECRET is not defined');
         }
 
         // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+        const decoded = jwt.verify(token as string, process.env.JWT_SECRET) as JwtPayload;
 
         // Get user from token
-        req.user = await User.findById(decoded.id).select('-password');
+        req.user = await User.findById(decoded.userId).select('-password');
 
         if (!req.user) {
           res.status(401);

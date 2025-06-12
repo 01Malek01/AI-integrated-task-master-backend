@@ -4,9 +4,10 @@ import generateToken from "../utils/generateToken.js";
 import createSendCookie from "../utils/createSendCookie.js";
 import { catchAsync, createError } from "../utils/errorHandler.js";
 
+
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
-    
+    console.log( email, password );
     // 1) Check if email and password exist
     if (!email || !password) {
         return next(createError('Please provide email and password', 400));
@@ -81,9 +82,27 @@ export const logout = catchAsync(async (req: Request, res: Response) => {
         sameSite: 'none',
         path: '/'
     });
-    
+     req.user = null;
     res.status(200).json({
         status: 'success',
         message: 'Successfully logged out'
     });
 });
+
+export const checkAuth  = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    if(req?.user){
+        const user = await User.findById(req.user._id);
+        if(!user){
+            return next(createError('User not found', 404));
+        }   
+        user.password = undefined;
+        res.status(200).json({
+            status: 'success',
+            data: {
+                user: user
+            }
+        });
+    } else {    
+        return next(createError('You are not logged in! please log in to get access', 401));
+    }
+})  

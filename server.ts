@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 import app from './app.js';
 import dotenv from 'dotenv';
+// import listModels from './lib/CheckAvailableModels.js';
 
 // Load environment variables
 dotenv.config();
 
+
+// listModels();
 if (!process.env.MONGODB_URI) {
   throw new Error('MONGODB_URI environment variable is not set');
 }
