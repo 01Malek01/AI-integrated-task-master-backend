@@ -8,6 +8,13 @@ export interface IUser extends Document {
 }
 
 export interface ITask extends Document {
+  subTasks :  {
+    title: string;
+    description: string;
+    dueDate?: Date | null;
+    priority: 'low' | 'medium' | 'high';
+    status: 'todo' | 'in-progress' | 'completed';
+  }[];
   title: string;
   description?: string;
   dueDate?: Date;

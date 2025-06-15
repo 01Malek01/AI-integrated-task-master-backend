@@ -6,6 +6,7 @@ import {
   updateTask, 
   deleteTask,
   updateTaskStatus,
+  createSubTask,
   taskValidation 
 } from '../controllers/TaskController';
 import { protect } from '../middleware/protect';
@@ -28,6 +29,11 @@ router.post(
   '/', 
   validateRequest(taskValidation.create),
   createTask
+);
+router.post(
+  '/:id/subtasks', 
+  validateRequest(taskValidation.create),
+  createSubTask
 );
 
 // PUT /tasks/:id - Update a task

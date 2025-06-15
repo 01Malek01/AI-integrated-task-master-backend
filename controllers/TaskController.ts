@@ -2,6 +2,10 @@ import { Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import Task from '../models/Task';
 import { body } from 'express-validator';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
 
 // @desc    Get all tasks for the logged-in user
 // @route   GET /tasks
@@ -49,6 +53,34 @@ export const createTask = asyncHandler(async (req: any, res: Response) => {
     });
     
     res.status(201).json(task);
+});
+
+// @desc    Create a new subtask
+// @route   POST /tasks/:id/subtasks
+// @access  Private
+export const createSubTask = asyncHandler(async (req: any, res: Response) => {
+    const { id } = req.params;
+    const { title, description, dueDate, priority, status } = req.body;
+    
+    const task = await Task.findOne({ _id: id, user: req.user._id });
+    
+    if (!task) {
+        res.status(404);
+        throw new Error('Task not found');
+    }
+    
+    const subTask = {
+        title,
+        description,
+        dueDate: dueDate ? new Date(dueDate) : null,
+        priority: priority || 'medium',
+        status: status || 'todo',
+    };
+    
+    task.subTasks.push(subTask);
+    await task.save();
+    
+    res.status(201).json(subTask);
 });
 
 // @desc    Update a task

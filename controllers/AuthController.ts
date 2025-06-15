@@ -73,14 +73,8 @@ export const register = catchAsync(async (req: Request, res: Response, next: Nex
 });
 
 export const logout = catchAsync(async (req: Request, res: Response) => {
-    res.cookie("jwt", "", {
-        httpOnly: true,
-        expires: new Date(0),
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
-        path: '/'
-    });
-     req.user = null;
+    res.clearCookie("jwt");
+    req.user = null;
     res.status(200).json({
         status: 'success',
         message: 'Successfully logged out'

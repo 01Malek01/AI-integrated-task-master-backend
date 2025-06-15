@@ -34,6 +34,32 @@ const taskSchema: Schema = new Schema<ITask>(
       type: Schema.Types.ObjectId,
       ref: 'Category',
     },
+    subTasks: [
+      {
+        title: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        description: {
+          type: String,
+          trim: true,
+        },
+        dueDate: {
+          type: Date,
+        },
+        priority: {
+          type: String,
+          enum: ['low', 'medium', 'high'],
+          default: 'medium',
+        },
+        status: {
+          type: String,
+          enum: ['todo', 'in-progress', 'completed'],
+          default: 'todo',
+        },
+      },
+    ],
   },
   {
     timestamps: true,
