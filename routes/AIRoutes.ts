@@ -1,7 +1,8 @@
 import { 
   summarizeTask, 
   assistantResponse, 
-  generateSubtasks 
+  generateSubtasks,
+  generateDescription 
 } from '../controllers/AIController';
 import { Router } from 'express';
 import { protect } from '../middleware/protect';
@@ -29,6 +30,13 @@ router.post(
     body('message').notEmpty().withMessage('Message is required')
   ]),
   assistantResponse
+);
+router.post(
+  '/generate-description',
+  validateRequest([
+    body('title').notEmpty().withMessage('Task title is required')
+  ]),
+  generateDescription
 );
 
 // Generate subtasks for a task

@@ -29,11 +29,12 @@ export const getNoteById = asyncHandler(async (req: any, res: Response) => {
 // @route   POST /notes
 // @access  Private
 export const createNote = asyncHandler(async (req: any, res: Response) => {
-    const { title, content } = req.body;
+    const { title, content , category } = req.body;
     
     const note = await Note.create({
         title,
         content,
+        category,       
         userId: req.user._id
     });
     
@@ -44,7 +45,7 @@ export const createNote = asyncHandler(async (req: any, res: Response) => {
 // @route   PUT /notes/:id
 // @access  Private
 export const updateNote = asyncHandler(async (req: any, res: Response) => {
-    const { title, content } = req.body;
+    const { title, content , category } = req.body;
     
     const note = await Note.findOne({ _id: req.params.id, userId: req.user._id });
     
@@ -55,7 +56,7 @@ export const updateNote = asyncHandler(async (req: any, res: Response) => {
     
     note.title = title || note.title;
     note.content = content || note.content;
-    
+    note.category = category || note.category;    
     const updatedNote = await note.save();
     
     res.json(updatedNote);
@@ -81,10 +82,12 @@ export const deleteNote = asyncHandler(async (req: any, res: Response) => {
 export const noteValidation = {
     create: [
         body('title').notEmpty().withMessage('Title is required'),
-        body('content').notEmpty().withMessage('Content is required')
+        body('content').notEmpty().withMessage('Content is required'), 
+        body('category').optional().isString().withMessage('Invalid category')
     ],
     update: [
         body('title').optional().notEmpty().withMessage('Title cannot be empty'),
-        body('content').optional().notEmpty().withMessage('Content cannot be empty')
+        body('content').optional().notEmpty().withMessage('Content cannot be empty'),
+        body('category').optional().isString().withMessage('Invalid category')
     ]
 };

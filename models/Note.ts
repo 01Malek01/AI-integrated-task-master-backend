@@ -6,6 +6,7 @@ export interface INote extends Document {
   userId: mongoose.Types.ObjectId;
   updatedAt?: Date;
   createdAt?: Date;
+  category?: string;
 }
 
 const noteSchema: Schema = new Schema(
@@ -22,6 +23,10 @@ const noteSchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    category  : {
+      type: String,
+      default : "General"
     },
   },
   {
