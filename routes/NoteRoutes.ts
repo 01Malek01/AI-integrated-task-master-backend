@@ -5,7 +5,8 @@ import {
   createNote, 
   updateNote, 
   deleteNote,
-  noteValidation 
+  noteValidation,
+  getNotesCount 
 } from '../controllers/NoteController';
 import { protect } from '../middleware/protect';
 import { validateRequest } from '../middleware/validation';
@@ -37,5 +38,8 @@ router.put(
 
 // DELETE /notes/:id - Delete a note
 router.delete('/:id', deleteNote);
+
+// GET /notes/stats/count - Get count of notes
+router.get('/stats/count', getNotesCount);
 
 export default router;

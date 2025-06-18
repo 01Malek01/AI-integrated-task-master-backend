@@ -79,6 +79,14 @@ export const deleteNote = asyncHandler(async (req: any, res: Response) => {
 });
 
 // Validation rules for note routes
+// @desc    Get count of notes for the logged-in user
+// @route   GET /notes/stats/count
+// @access  Private
+export const getNotesCount = asyncHandler(async (req: any, res: Response) => {
+    const count = await Note.countDocuments({ userId: req.user._id });
+    res.json({ count });
+});
+
 export const noteValidation = {
     create: [
         body('title').notEmpty().withMessage('Title is required'),

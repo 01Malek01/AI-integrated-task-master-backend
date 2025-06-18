@@ -22,7 +22,7 @@ export const AI_generateSubtasks = async (taskTitle: string) => {
         messages: [
           {
             role: 'system',
-            content: `Generate 4 subtasks for this task, label each task with a title and a description for example: title: "Task Title", description: "Task Description": "${taskTitle}"`,
+            content: `Generate 4 subtasks for this task, label each task with a title and a description for example: title: "Task Title", description: "Task Description", list the tasks as an array of objects: "${taskTitle}"`,
           },
           
         ],

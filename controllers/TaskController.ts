@@ -4,6 +4,7 @@ import Task from '../models/Task';
 import { body } from 'express-validator';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { Types } from 'mongoose';
 
 dayjs.extend(customParseFormat);
 
@@ -143,6 +144,52 @@ export const updateTaskStatus = asyncHandler(async (req: any, res: Response) => 
 });
 
 // Validation rules for task routes
+// @desc    Update subtask status
+// @route   PATCH /tasks/:taskId/subtasks/:subTaskId/status
+// @access  Private
+export const updateSubTaskStatus = asyncHandler(async (req: any, res: Response) => {
+    const { id, subTaskId } = req.params;
+    console.log(id, subTaskId);
+    const { status } = req.body;
+    
+    const task = await Task.findOne({ _id: id, user: req.user._id });
+    
+    if (!task) {
+        res.status(404);
+        throw new Error('Task not found');
+    }
+    
+    const subTaskIndex = task.subTasks.findIndex(
+        (subTask: any) => subTask._id.toString() === subTaskId
+    );
+    
+    if (subTaskIndex === -1) {
+        res.status(404);
+        throw new Error('Subtask not found');
+    }
+    
+    // Update the subtask status
+    task.subTasks[subTaskIndex].status = status || task.subTasks[subTaskIndex].status;
+    
+    const updatedTask = await task.save();
+    
+    // Return the updated subtask
+    res.json(updatedTask.subTasks[subTaskIndex]);
+});
+
+// Validation rules for task routes
+// @desc    Get count of completed tasks for the logged-in user
+// @route   GET /tasks/stats/completed
+// @access Private
+export const getCompletedTasksCount = asyncHandler(async (req: any, res: Response) => {
+    const count = await Task.countDocuments({ 
+        user: new Types.ObjectId(req.user._id),
+        status: 'completed' 
+    });
+    
+    res.json({ count });
+});
+
 export const taskValidation = {
     create: [
         body('title').notEmpty().withMessage('Title is required'),
@@ -158,9 +205,11 @@ export const taskValidation = {
         body('dueDate').optional().isISO8601().withMessage('Invalid date format'),
         body('priority').optional().isIn(['low', 'medium', 'high']).withMessage('Invalid priority'),
         body('status').optional().isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status') 
-        
     ],
     updateStatus: [
+        body('status').isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status')
+    ],
+    updateSubTaskStatus: [
         body('status').isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status')
     ]
 };

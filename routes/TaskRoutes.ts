@@ -7,7 +7,9 @@ import {
   deleteTask,
   updateTaskStatus,
   createSubTask,
-  taskValidation 
+  updateSubTaskStatus,
+  taskValidation,
+  getCompletedTasksCount 
 } from '../controllers/TaskController';
 import { protect } from '../middleware/protect';
 import { validateRequest } from '../middleware/validation';
@@ -50,7 +52,17 @@ router.patch(
   updateTaskStatus
 );
 
+// PATCH /tasks/:taskId/subtasks/:subTaskId/status - Update subtask status
+router.patch(
+  '/:id/subtasks/:subTaskId/status',
+  validateRequest(taskValidation.updateSubTaskStatus),
+  updateSubTaskStatus
+);
+
 // DELETE /tasks/:id - Delete a task
 router.delete('/:id', deleteTask);
+
+// GET /tasks/stats/completed - Get count of completed tasks
+router.get('/stats/completed', getCompletedTasksCount);
 
 export default router;
