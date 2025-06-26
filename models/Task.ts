@@ -1,5 +1,6 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { ITask } from '../types/models';
+import dayjs from 'dayjs';
 
 const taskSchema: Schema = new Schema<ITask>(
   {
@@ -11,6 +12,10 @@ const taskSchema: Schema = new Schema<ITask>(
     description: {
       type: String,
       trim: true,
+    },
+    startDate : {
+      type: Date,
+      default :dayjs().toDate()
     },
     dueDate: {
       type: Date,
@@ -45,6 +50,7 @@ const taskSchema: Schema = new Schema<ITask>(
           type: String,
           trim: true,
         },
+      
         dueDate: {
           type: Date,
         },
@@ -58,6 +64,7 @@ const taskSchema: Schema = new Schema<ITask>(
           enum: ['todo', 'in-progress', 'completed'],
           default: 'todo',
         },
+
       },
     ],
   },

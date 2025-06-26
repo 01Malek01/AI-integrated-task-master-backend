@@ -88,8 +88,8 @@ export const createSubTask = asyncHandler(async (req: any, res: Response) => {
 // @route   PUT /tasks/:id
 // @access  Private
 export const updateTask = asyncHandler(async (req: any, res: Response) => {
-    const { title, description, dueDate, priority, status } = req.body;
-    
+    const { title, description, dueDate, priority, status, startDate } = req.body;
+    console.log( req.body );
     const task = await Task.findOne({ _id: req.params.id, user: req.user._id });
     
     if (!task) {
@@ -102,6 +102,7 @@ export const updateTask = asyncHandler(async (req: any, res: Response) => {
     task.dueDate = dueDate ? new Date(dueDate) : task.dueDate;
     task.priority = priority || task.priority;
     task.status = status || task.status;
+    task.startDate = startDate ? new Date(startDate) : task.startDate;
     
     const updatedTask = await task.save();
     
@@ -194,7 +195,6 @@ export const taskValidation = {
     create: [
         body('title').notEmpty().withMessage('Title is required'),
         body('description').optional(),
-        body('dueDate').optional().isISO8601().withMessage('Invalid date format'),
         body('priority').optional().isIn(['low', 'medium', 'high']).withMessage('Invalid priority'),
         body('status').optional().isIn(['todo', 'in-progress', 'completed']).withMessage('Invalid status'),
         body('category').optional().isMongoId().withMessage('Invalid category ID')

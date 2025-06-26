@@ -22,6 +22,7 @@ export interface ITask extends Document {
   status: 'todo' | 'in-progress' | 'completed';
   user: Types.ObjectId;
   category?: Types.ObjectId;
+   startDate ?: Date;
 }
 
 export interface IProgress extends Document {
