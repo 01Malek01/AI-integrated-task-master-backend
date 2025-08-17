@@ -7,12 +7,20 @@ import dotenv from 'dotenv';
 import { globalErrorHandler } from './utils/errorHandler.js';
 import routeAggregator from './routes/index.js';
 import rateLimit from 'express-rate-limit';
+import Stripe from 'stripe';
 
 // Load environment variables
 dotenv.config();
 
 // Create Express app
 const app = express();
+
+
+//stripe config
+export const stripe = new Stripe(process.env.STRIPE_API_SECRET as string);
+
+
+
 
 // Middleware
 
@@ -24,8 +32,15 @@ if (process.env.NODE_ENV === 'development') {
 app.use(cookieParser());
 
 // Parse application/json
-app.use(bodyParser.json());
-
+app.use((req, res, next) => {
+  console.log(' req.originalUrl',req.originalUrl)
+  //stripe will use raw body for webhook
+  if (req.originalUrl === '/api/subscription/stripe-webhook') {
+    bodyParser.raw({ type: 'application/json' })(req, res, next);
+   } else {
+    bodyParser.json()(req, res, next);
+  }
+});
 // Parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -35,27 +50,26 @@ const corsOptions = {
     // For development, allow requests from localhost:3000 with or without trailing slash
     const allowedOrigins = [
       'http://localhost:3000',
-      'http://localhost:3000/'
+      'http://localhost:3000/',
+    process.env.FRONTEND_URL,
     ];
     
-    // In production, you can add your production domain here
+    // In production, add your production domain here
     if (process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL) {
       allowedOrigins.push(process.env.FRONTEND_URL);
-      if (process.env.FRONTEND_URL.endsWith('/')) {
-        allowedOrigins.push(process.env.FRONTEND_URL.slice(0, -1));
-      } else {
-        allowedOrigins.push(`${process.env.FRONTEND_URL}/`);
-      }
     }
 
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, origin); // Return the origin instead of true for dynamic origin
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS' , 'PATCH'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   exposedHeaders: ['Set-Cookie'],
   optionsSuccessStatus: 200

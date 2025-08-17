@@ -4,7 +4,17 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password?: string;
+  subscription?: Types.ObjectId;
+  stripeCustomerId?: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
+  isSubscribed: boolean;
+  subscriptionType: string;
+  subscriptionStartDate: Date;
+  subscriptionEndDate: Date;
+  settings : {  
+    notifications : boolean;
+    darkMode : boolean; 
+  }
 }
 
 export interface ITask extends Document {

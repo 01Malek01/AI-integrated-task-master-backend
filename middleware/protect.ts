@@ -19,7 +19,6 @@ interface JwtPayload {
 const protect = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     let token: string | undefined;
-
     // Get token from cookie or Authorization header
     token = req.cookies?.jwt || 
           (req.headers.authorization && req.headers.authorization.startsWith('Bearer ') 

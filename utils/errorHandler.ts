@@ -22,7 +22,7 @@ export const globalErrorHandler = (err: ErrorWithStatus, _req: Request, res: Res
   }
 
   // Handle validation errors
-  if (err.name === 'ValidationError' || err.code === 'VALIDATION_ERROR') {
+  if (err.name === 'ValidationError') {
     // For express-validator errors that we formatted
     if (err.errors) {
       console.error('Validation Errors:', err.errors);

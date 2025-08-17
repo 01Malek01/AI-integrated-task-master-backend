@@ -2,8 +2,10 @@ import User from "../models/User.js";
 import { Request, Response, NextFunction } from "express";
 import generateToken from "../utils/generateToken.js";
 import createSendCookie from "../utils/createSendCookie.js";
-import { catchAsync, createError } from "../utils/errorHandler.js";
-
+import { createError } from "../utils/errorHandler.js";
+import catchAsync from "express-async-handler";
+import { stripe } from "../app.js";
+import { IUser } from "../types/models.js";
 
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
@@ -49,12 +51,25 @@ export const register = catchAsync(async (req: Request, res: Response, next: Nex
         return next(createError('Email already in use', 400));
     }
 
-    // 3) Create new user
+    // 3) Create new user first to get the MongoDB _id
     const user = await User.create({
         username,
         email,
         password
+    }) as IUser & { _id: any };  // Type assertion to include _id
+
+    // 4) Create Stripe customer and link to the user
+    const customer = await stripe.customers.create({
+        email,
+        name: username,
+        metadata: {
+            userId: user._id.toString()
+        }
     });
+
+    // 5) Update user with Stripe customer ID
+    user.stripeCustomerId = customer.id;
+    await user.save();
 
     // 4) Generate token and send response
     const token = await generateToken(user._id as string);

@@ -1,6 +1,7 @@
 import mongoose, { Schema, Model, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { IUser } from '../types/models';
+import './Subscription'; // Import to register the model
 
 // Extend the IUser interface to make password optional
 declare global {
@@ -34,6 +35,43 @@ const userSchema: Schema = new Schema<IUserDocument>(
       minlength: 6,
       select: false,
     },
+    subscription : {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Subscription',
+    },
+      isSubscribed : {
+      type : Boolean,
+      default : false
+    },
+    subscriptionType : {
+      type : String,
+      default : 'free'
+    },
+    subscriptionStartDate : {
+        type : Date,
+        default : Date.now()
+    },
+    subscriptionEndDate : {
+        type : Date,
+        default : Date.now()
+    },
+    stripeCustomerId : {
+      type : String,
+      default : ''
+    },
+    settings:{
+      notifications:{
+          type : Boolean,
+          default : true
+          },
+          darkMode:{
+            type : Boolean,
+            default : false
+          }
+          
+          
+    }
+   
   },
   {
     timestamps: true,
