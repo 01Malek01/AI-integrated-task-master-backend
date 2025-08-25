@@ -5,6 +5,7 @@ import NoteRoutes from './NoteRoutes';
 import TaskRoutes from './TaskRoutes';
 import UserRoutes from './UserRoutes';
 import SubscriptionRoutes from './SubscriptionRoutes';
+import NotificationRoutes from './NotificationRoutes';
 const router = express.Router();
 
 // API routes
@@ -14,6 +15,7 @@ router.use('/ai', AIRoutes);
 router.use('/notes', NoteRoutes);
 router.use('/tasks', TaskRoutes);
 router.use('/subscription', SubscriptionRoutes);
+router.use('/notifications', NotificationRoutes);
 
 // Health check endpoint
 router.get('/health', (_req, res) => {

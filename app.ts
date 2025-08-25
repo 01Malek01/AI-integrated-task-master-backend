@@ -8,12 +8,14 @@ import { globalErrorHandler } from './utils/errorHandler.js';
 import routeAggregator from './routes/index.js';
 import rateLimit from 'express-rate-limit';
 import Stripe from 'stripe';
-
+import { io } from './server.js';
 // Load environment variables
 dotenv.config();
 
 // Create Express app
 const app = express();
+
+
 
 
 //stripe config
