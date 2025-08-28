@@ -1,13 +1,13 @@
-import { 
-  summarizeTask, 
-  assistantResponse, 
+import {
+  summarizeTask,
+  assistantResponse,
   generateSubtasks,
-  generateDescription 
-} from '../controllers/AIController';
-import { Router } from 'express';
-import { protect } from '../middleware/protect';
-import { validateRequest } from '../middleware/validation';
-import { body } from 'express-validator';
+  generateDescription,
+} from "../controllers/AIController.js";
+import { Router } from "express";
+import { protect } from "../middleware/protect.js";
+import { validateRequest } from "../middleware/validation.js";
+import { body } from "express-validator";
 
 const router = Router();
 
@@ -16,34 +16,32 @@ router.use(protect);
 
 // Summarize text
 router.post(
-  '/summarize', 
-  validateRequest([
-    body('text').notEmpty().withMessage('Text is required')
-  ]),
+  "/summarize",
+  validateRequest([body("text").notEmpty().withMessage("Text is required")]),
   summarizeTask
 );
 
 // Get AI assistant response
 router.post(
-  '/assistant',
+  "/assistant",
   validateRequest([
-    body('message').notEmpty().withMessage('Message is required')
+    body("message").notEmpty().withMessage("Message is required"),
   ]),
   assistantResponse
 );
 router.post(
-  '/generate-description',
+  "/generate-description",
   validateRequest([
-    body('title').notEmpty().withMessage('Task title is required')
+    body("title").notEmpty().withMessage("Task title is required"),
   ]),
   generateDescription
 );
 
 // Generate subtasks for a task
 router.post(
-  '/generate-subtasks',
+  "/generate-subtasks",
   validateRequest([
-    body('title').notEmpty().withMessage('Task title is required')
+    body("title").notEmpty().withMessage("Task title is required"),
   ]),
   generateSubtasks
 );

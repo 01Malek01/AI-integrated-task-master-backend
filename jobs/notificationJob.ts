@@ -1,7 +1,7 @@
 import cron from "node-cron";
-import NotificationService from "../services/NotificationService";
-import Task from "../models/Task";
-import User from "../models/User";
+import NotificationService from "../services/NotificationService.js";
+import Task from "../models/Task.js";
+import User from "../models/User.js";
 
 // Run every day at 9 AM
 cron.schedule("0 9 * * *", async () => {
@@ -26,6 +26,7 @@ for (const user of allUsers) {
   ];
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
   const notify = new NotificationService({
+    //@ts-ignore
     user: user._id.toString(), 
     message: randomMessage, 
     type: "motivation"
@@ -33,3 +34,4 @@ for (const user of allUsers) {
   await notify.createNotification();
 }
 });
+

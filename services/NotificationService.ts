@@ -1,5 +1,5 @@
-import Notification from "../models/Notification";
-import {io} from "../server"
+import Notification from "../models/Notification.js";
+import {io} from "../server.js"
 interface NotificationServiceProps {
     user: string;
     message: string;

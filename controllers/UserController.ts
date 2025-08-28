@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { body } from 'express-validator';
-import User from '../models/User';
-import { createError } from '../utils/appError';
+import User from '../models/User.js';
+import { createError } from '../utils/appError.js';
 import asyncHandler from 'express-async-handler';
 
 // @desc    Get current user profile
@@ -43,7 +43,7 @@ export const updateMyProfile = asyncHandler(async (req: any, res: Response, next
     
     // 4) Remove sensitive data
     updatedUser.password = undefined;
-    updatedUser.__v = undefined;
+    updatedUser.__v= undefined as any;
     
     res.status(200).json({
         status: 'success',

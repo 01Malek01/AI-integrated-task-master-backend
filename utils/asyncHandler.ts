@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, RequestHandler } from 'express';
-import { createError } from './appError';
+import { createError } from './appError.js';
 
 export const asyncHandler = (fn: RequestHandler) => {
   return (req: Request, res: Response, next: NextFunction) => {

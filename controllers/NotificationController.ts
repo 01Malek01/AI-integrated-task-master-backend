@@ -1,17 +1,8 @@
  import { Request, Response } from 'express';
-import NotificationService from '../services/NotificationService';
-import { Server } from 'socket.io';
+import NotificationService from '../services/NotificationService.js';
 
-interface AuthenticatedRequest extends Request {
-    user: {
-        id: string;
-    };
-    app: {
-        get: (key: string) => Server;
-    };
-}
 
-export const getNotifications = async (req: AuthenticatedRequest, res: Response) => {
+export const getNotifications = async (req:  Request, res: Response) => {
     try {
         const notifications = await NotificationService.getNotifications(req.user.id);
         return res.status(200).json(notifications);
@@ -20,7 +11,7 @@ export const getNotifications = async (req: AuthenticatedRequest, res: Response)
     }
 };
 
-export const markAsRead = async (req: AuthenticatedRequest, res: Response) => {
+export const markAsRead = async (req: Request, res: Response) => {
     try {
        const result = await NotificationService.markAllAsRead(req.user.id);
        return res.status(200).json(result);
@@ -29,7 +20,7 @@ export const markAsRead = async (req: AuthenticatedRequest, res: Response) => {
     }
 };
 
-export const deleteNotification = async (req: AuthenticatedRequest, res: Response) => {
+export const deleteNotification = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const notifications = await NotificationService.getNotifications(req.user.id);
@@ -43,7 +34,6 @@ export const deleteNotification = async (req: AuthenticatedRequest, res: Respons
             user: targetNotification.user.toString(),
             message: targetNotification.message,
             type: targetNotification.type,
-            io: req.app.get('io')
         });
         
         await notificationService.deleteNotification(id);
@@ -53,7 +43,7 @@ export const deleteNotification = async (req: AuthenticatedRequest, res: Respons
     }
 };
 
-export const clearAllNotifications = async (req: AuthenticatedRequest, res: Response) => {
+export const clearAllNotifications = async (req: Request, res: Response) => {
     try {
         const result = await NotificationService.clearNotifications(req.user.id);
         return res.status(200).json(result);

@@ -1,32 +1,37 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 // import { stripe } from "../app";
 
- const subscriptionSchema = new mongoose.Schema({
-    plan: {
-        type: String,
-        default: 'free'
-    },
-    description : {
-        type : String,
-        default : 'free plan'
-    },
-    price : {
-        type : Number,
-        default : 0
-    },
-    //Related to stripe
-    priceId : {
-        type : String,
-        default : ''
-    },
-    
- 
-   duration : {
-    type : String,
-    default : 'monthly'
-   },
+export interface ISubscription extends Document {
+  plan: string;
+  description: string;
+  price: number;
+  priceId: string;
+  duration: string;
+}
 
- }) 
+const subscriptionSchema = new mongoose.Schema({
+  plan: {
+    type: String,
+    default: 'free'
+  },
+  description: {
+    type: String,
+    default: 'free plan'
+  },
+  price: {
+    type: Number,
+    default: 0
+  },
+  //Related to stripe
+  priceId: {
+    type: String,
+    default: ''
+  },
+  duration: {
+    type: String,
+    default: 'monthly'
+  },
+}) 
 
 
  //create a pre save hook to create then store stripe price id
@@ -44,5 +49,5 @@ import mongoose from "mongoose";
 //           await this.save();
 //     }
 // })
- const  Subscription = mongoose.model('Subscription', subscriptionSchema);
+const Subscription = mongoose.model<ISubscription>('Subscription', subscriptionSchema);
  export default Subscription;

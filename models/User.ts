@@ -1,7 +1,7 @@
-import mongoose, { Schema, Model, Document } from 'mongoose';
-import bcrypt from 'bcryptjs';
-import { IUser } from '../types/models';
-import './Subscription'; // Import to register the model
+import mongoose, { Schema, Model, Document } from "mongoose";
+import bcrypt from "bcryptjs";
+import { IUser } from "../types/models.js";
+import "./Subscription.js"; // Import to register the model
 
 // Extend the IUser interface to make password optional
 declare global {
@@ -35,43 +35,40 @@ const userSchema: Schema = new Schema<IUserDocument>(
       minlength: 6,
       select: false,
     },
-    subscription : {
+    subscription: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Subscription',
+      ref: "Subscription",
     },
-      isSubscribed : {
-      type : Boolean,
-      default : false
+    isSubscribed: {
+      type: Boolean,
+      default: false,
     },
-    subscriptionType : {
-      type : String,
-      default : 'free'
+    subscriptionType: {
+      type: String,
+      default: "free",
     },
-    subscriptionStartDate : {
-        type : Date,
-        default : Date.now()
+    subscriptionStartDate: {
+      type: Date,
+      default: Date.now(),
     },
-    subscriptionEndDate : {
-        type : Date,
-        default : Date.now()
+    subscriptionEndDate: {
+      type: Date,
+      default: Date.now(),
     },
-    stripeCustomerId : {
-      type : String,
-      default : ''
+    stripeCustomerId: {
+      type: String,
+      default: "",
     },
-    settings:{
-      notifications:{
-          type : Boolean,
-          default : true
-          },
-          darkMode:{
-            type : Boolean,
-            default : false
-          }
-          
-          
-    }
-   
+    settings: {
+      notifications: {
+        type: Boolean,
+        default: true,
+      },
+      darkMode: {
+        type: Boolean,
+        default: false,
+      },
+    },
   },
   {
     timestamps: true,
@@ -79,8 +76,8 @@ const userSchema: Schema = new Schema<IUserDocument>(
 );
 
 // Hash password before saving
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
 
   try {
     const salt = await bcrypt.genSalt(10);
@@ -98,6 +95,9 @@ userSchema.methods.comparePassword = async function (
   return bcrypt.compare(candidatePassword as string, this.password);
 };
 
-const User: Model<IUserDocument> = mongoose.model<IUserDocument>('User', userSchema);
+const User: Model<IUserDocument> = mongoose.model<IUserDocument>(
+  "User",
+  userSchema
+);
 
 export default User;

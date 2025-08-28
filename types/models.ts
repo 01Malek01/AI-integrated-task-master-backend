@@ -22,8 +22,8 @@ export interface ITask extends Document {
     title: string;
     description: string;
     dueDate?: Date | null;
-    priority: 'low' | 'medium' | 'high';
-    status: 'todo' | 'in-progress' | 'completed';
+    priority?: 'low' | 'medium' | 'high';
+    status?: 'todo' | 'in-progress' | 'completed';
   }[];
   title: string;
   description?: string;

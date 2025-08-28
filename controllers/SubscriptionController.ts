@@ -1,9 +1,10 @@
-import Subscription from "../models/Subscription";
-import { stripe } from "../app";
-import expressAsyncHandler from "express-async-handler"
-import User from "../models/User";
-
-export const createCheckoutSession = expressAsyncHandler(async (req, res, next) => {
+import Subscription from "../models/Subscription.js";
+import { stripe } from "../app.js";
+import expressAsyncHandler from "express-async-handler";
+import User from "../models/User.js";
+import { Request, Response, NextFunction } from "express";
+    
+export const createCheckoutSession = expressAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   const userId = req.user?._id; // Assuming you have user in req.user from your auth middleware
   
@@ -13,15 +14,18 @@ export const createCheckoutSession = expressAsyncHandler(async (req, res, next) 
   ]);
 
   if (!plan) {
-    return res.status(404).json({ message: 'Plan not found' });
+    res.status(404).json({ message: 'Plan not found' });
+    return;
   }
 
   if (!user) {
-    return res.status(404).json({ message: 'User not found' });
+    res.status(404).json({ message: 'User not found' });
+    return;
   }
 
   if (!user.stripeCustomerId) {
-    return res.status(400).json({ message: 'No Stripe customer ID found for this user' });
+    res.status(400).json({ message: 'No Stripe customer ID found for this user' });
+    return;
   }
 
   const session = await stripe.checkout.sessions.create({
@@ -41,7 +45,7 @@ export const createCheckoutSession = expressAsyncHandler(async (req, res, next) 
 })
 
 //for production 
-export const stripeWebhookHandler = expressAsyncHandler(async (req, res) => {
+export const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     let event;
   
@@ -53,8 +57,9 @@ export const stripeWebhookHandler = expressAsyncHandler(async (req, res) => {
           webhookSecret as string
         );
       } catch (err) {
-        console.log(`⚠️  Webhook signature verification failed.`, err.message);
-        return res.sendStatus(400);
+        console.log(`⚠️  Webhook signature verification failed.`, (err as Error)?.message);
+         res.sendStatus(400);
+          return;
       }
   
       let user;
@@ -90,21 +95,28 @@ export const stripeWebhookHandler = expressAsyncHandler(async (req, res) => {
             user = await User.findOne({stripeCustomerId: data.customer});
             
             if(!user) {
-              return res.status(404).json({message: 'User not found'});
+               res.status(404).json({message: 'User not found'});
+               return;
             }
           
             // Find the subscription by priceId
+            //@ts-expect-error
             const subscription = await Subscription.findOne({ priceId: data.plan.id });
             if (!subscription) {
+                            //@ts-expect-error
+
               console.error('Subscription not found for price ID:', data.plan.id);
-              return res.status(404).json({ message: "Subscription plan not found" });
+               res.status(404).json({ message: "Subscription plan not found" });
+               return;
             }
           
             user.isSubscribed = true;
-            user.subscription = subscription._id;  // Store the MongoDB _id
+            //@ts-expect-error
+            user.subscription = subscription._id as string;  // Store the MongoDB _id
             user.subscriptionType = subscription.plan;
-            user.subscriptionStartDate = new Date(data.current_period_start * 1000);
-            user.subscriptionEndDate = new Date(data.current_period_end * 1000);
+            const subscriptionData = data as unknown as { current_period_start: number; current_period_end: number; };
+            user.subscriptionStartDate = new Date(subscriptionData.current_period_start * 1000);
+            user.subscriptionEndDate = new Date(subscriptionData.current_period_end * 1000);
             await user.save();
             break;
       case 'invoice.created':

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { createError } from './appError';
+import { createError } from './appError.js';
 
 interface ErrorWithStatus extends Error {
   statusCode?: number;

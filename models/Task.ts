@@ -1,6 +1,6 @@
-import mongoose, { Schema, Model } from 'mongoose';
-import { ITask } from '../types/models';
-import dayjs from 'dayjs';
+import mongoose, { Schema, Model } from "mongoose";
+import { ITask } from "../types/models.js";
+import dayjs from "dayjs";
 
 const taskSchema: Schema = new Schema<ITask>(
   {
@@ -13,31 +13,31 @@ const taskSchema: Schema = new Schema<ITask>(
       type: String,
       trim: true,
     },
-    startDate : {
+    startDate: {
       type: Date,
-      default :dayjs().toDate()
+      default: dayjs().toDate(),
     },
     dueDate: {
       type: Date,
     },
     priority: {
       type: String,
-      enum: ['low', 'medium', 'high'],
-      default: 'medium',
+      enum: ["low", "medium", "high"],
+      default: "medium",
     },
     status: {
       type: String,
-      enum: ['todo', 'in-progress', 'completed'],
-      default: 'todo',
+      enum: ["todo", "in-progress", "completed"],
+      default: "todo",
     },
     user: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     category: {
       type: Schema.Types.ObjectId,
-      ref: 'Category',
+      ref: "Category",
     },
     subTasks: [
       {
@@ -50,21 +50,20 @@ const taskSchema: Schema = new Schema<ITask>(
           type: String,
           trim: true,
         },
-      
+
         dueDate: {
           type: Date,
         },
         priority: {
           type: String,
-          enum: ['low', 'medium', 'high'],
-          default: 'medium',
+          enum: ["low", "medium", "high"],
+          default: "medium",
         },
         status: {
           type: String,
-          enum: ['todo', 'in-progress', 'completed'],
-          default: 'todo',
+          enum: ["todo", "in-progress", "completed"],
+          default: "todo",
         },
-
       },
     ],
   },
@@ -73,6 +72,6 @@ const taskSchema: Schema = new Schema<ITask>(
   }
 );
 
-const Task: Model<ITask> = mongoose.model<ITask>('Task', taskSchema);
+const Task: Model<ITask> = mongoose.model<ITask>("Task", taskSchema);
 
 export default Task;

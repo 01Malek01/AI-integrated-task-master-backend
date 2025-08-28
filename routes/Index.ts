@@ -1,11 +1,11 @@
 import express from 'express';
-import AuthRoutes from './AuthRoutes';
-import AIRoutes from './AIRoutes';
-import NoteRoutes from './NoteRoutes';
-import TaskRoutes from './TaskRoutes';
-import UserRoutes from './UserRoutes';
-import SubscriptionRoutes from './SubscriptionRoutes';
-import NotificationRoutes from './NotificationRoutes';
+import AuthRoutes from './AuthRoutes.js';
+import AIRoutes from './AIRoutes.js';
+import NoteRoutes from './NoteRoutes.js';
+import TaskRoutes from './TaskRoutes.js';
+import UserRoutes from './UserRoutes.js';
+import SubscriptionRoutes from './SubscriptionRoutes.js';
+import NotificationRoutes from './NotificationRoutes.js';
 const router = express.Router();
 
 // API routes

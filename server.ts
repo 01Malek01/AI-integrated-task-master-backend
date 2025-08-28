@@ -5,8 +5,8 @@ import {Server} from 'socket.io';
 import { createServer } from 'http';
 
 // import to register the jobs
-import './jobs/notificationJob';
-// import listModels from './lib/CheckAvailableModels.js';
+import './jobs/notificationJob.js';
+import './lib/CheckAvailableModels.js';
 
 // Load environment variables
 dotenv.config();
@@ -55,6 +55,7 @@ const mongoURI = process.env.MONGODB_URI.replace(
 mongoose
   .connect(mongoURI)
   .then(() => console.log("Connected to MongoDB"))
+  .then(() => import('./jobs/notificationJob.js'))
   .catch((err: Error) => console.error("MongoDB connection error:", err));
 
 // Start server

@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import Note from '../models/Note';
+import Note from '../models/Note.js';
 import { body } from 'express-validator';
 
 // @desc    Get all notes for the logged-in user

@@ -1,11 +1,11 @@
 import asyncHandler from 'express-async-handler';
-import { AI_summarize } from '../lib/AI-summarize-texts';
-import { AI_assistant } from '../lib/AI_assistant';
-import { AI_generateSubtasks } from '../lib/AI-generateSubTasks';
-import { AI_generateDescription } from '../lib/AI-generateDescription';
-import { Request, Response } from 'express';
-import processReadingPlanData from '../utils/formatJson';
-import Task from '../models/Task';
+import { AI_summarize } from '../lib/AI-summarize-texts.js';
+import { AI_assistant } from '../lib/AI_assistant.js';
+import { AI_generateSubtasks } from '../lib/AI-generateSubTasks.js';
+import { AI_generateDescription } from '../lib/AI-generateDescription.js';
+import { Request, Response } from 'express';                
+import processReadingPlanData from '../utils/formatJson.js';
+import Task from '../models/Task.js';
 // @desc    Summarize text
 // @route   POST /ai/summarize
 // @access  Private

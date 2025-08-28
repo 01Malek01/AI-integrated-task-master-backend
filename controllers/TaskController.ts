@@ -1,9 +1,9 @@
 import { Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import Task from '../models/Task';
+import Task from '../models/Task.js';
 import { body } from 'express-validator';
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import { Types } from 'mongoose';
 
 dayjs.extend(customParseFormat);
