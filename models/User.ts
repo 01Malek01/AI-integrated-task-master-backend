@@ -20,7 +20,6 @@ const userSchema: Schema = new Schema<IUserDocument>(
       type: String,
       required: true,
       trim: true,
-      unique: true,
     },
     email: {
       type: String,
@@ -68,6 +67,14 @@ const userSchema: Schema = new Schema<IUserDocument>(
         type: Boolean,
         default: false,
       },
+    },
+    passwordResetToken: {
+      type: String,
+      select: false,
+    },
+    passwordResetExpires: {
+      type: Date,
+      select: false,
     },
   },
   {

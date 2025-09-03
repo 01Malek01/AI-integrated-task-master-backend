@@ -15,6 +15,8 @@ export interface IUser extends Document {
     notifications : boolean;
     darkMode : boolean; 
   }
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
 }
 
 export interface ITask extends Document {
