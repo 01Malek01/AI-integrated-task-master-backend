@@ -5,9 +5,9 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { globalErrorHandler } from './utils/errorHandler.js';
-import routeAggregator from './routes/index';
 import rateLimit from 'express-rate-limit';
 import Stripe from 'stripe';
+import routeAggregator from '@/routes/index.js';
 // Load environment variables
 dotenv.config();
 
