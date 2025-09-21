@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: tasks-master-backend
+    env: docker
+    region: oregon # Choose the region closest to your users
+    plan: free # Or 'starter'/'standard' for production
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    dockerCommand: "npm run start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        fromDatabase:
+          name: tasks-master-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: STRIPE_API_SECRET
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRO_PLAN_PRICE_ID
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: GMAIL_EMAIL
+        sync: false
+      - key: HUGGINGFACE_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+    healthCheckPath: /api/health
+    autoDeploy: true

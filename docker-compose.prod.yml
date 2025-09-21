@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      target: production
+    container_name: tasks-master-backend-prod
+    restart: unless-stopped
+    ports:
+      - "${PORT}:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGODB_URI=${MONGODB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - STRIPE_API_SECRET=${STRIPE_API_SECRET}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - STRIPE_PRO_PLAN_PRICE_ID=${STRIPE_PRO_PLAN_PRICE_ID}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
+      - GMAIL_EMAIL=${GMAIL_EMAIL}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+

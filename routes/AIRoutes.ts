@@ -8,7 +8,7 @@ import { Router } from "express";
 import { protect } from "../middleware/protect.js";
 import { validateRequest } from "../middleware/validation.js";
 import { body } from "express-validator";
-import checkProSubscription from "@/middleware/checkSubscription.js";
+import checkProSubscription from "../middleware/checkSubscription.js";
 
 const router = Router();
 

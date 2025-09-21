@@ -1,38 +1,53 @@
-# Build stage
+# ========== Build Stage ==========
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copy package files
+# Copy package files and install dependencies
 COPY package*.json ./
 COPY tsconfig*.json ./
+RUN npm ci
 
-# Install all dependencies including devDependencies
-RUN npm install
-
-# Copy source code
+# Copy source code and build
 COPY . .
-# Build the application
-RUN npm run build 
+RUN npm run build
 
-# Production stage
+# ========== Production Stage ==========
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Set NODE_ENV to production
+ENV NODE_ENV=production
 
-# Install only production dependencies
-RUN npm install --only=production
-
-# Copy built files and additional required directories
-COPY --from=builder /app/dist ./dist
-
-# Copy other necessary files (like .env if needed)
-COPY --from=builder /app/.env* ./
+# Install production dependencies only
 COPY --from=builder /app/package*.json ./
+RUN npm ci --only=production
+
+# Copy built files from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/.env* ./
 
 # Expose the app port
 EXPOSE 5000
 
+# Set the user to node for better security
+USER node
+
 # Start the application
 CMD ["node", "dist/server.js"]
+
+# ========== Development Stage ==========
+FROM node:20-alpine AS development
+WORKDIR /app
+
+# Copy package files and install all dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Expose port
+EXPOSE 5000
+
+# Command to run the application with tsx watch
+CMD ["npm", "run", "dev"]

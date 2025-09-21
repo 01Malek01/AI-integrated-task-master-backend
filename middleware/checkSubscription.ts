@@ -1,4 +1,4 @@
-import { asyncHandler } from "@/utils/asyncHandler";
+import asyncHandler from "express-async-handler";
 
 const checkProSubscription = asyncHandler(async(req,res,next) => {
     const user = req.user;

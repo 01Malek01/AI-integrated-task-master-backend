@@ -3,10 +3,10 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
-    "lib": ["ES2022"], // Keep this for standard JS features
+    "lib": ["ES2022"],
     "allowJs": true,
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,14 +15,19 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"],
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@controllers/*": ["./controllers/*"],
+      "@models/*": ["./models/*"],
+      "@routes/*": ["./routes/*"],
+      "@middleware/*": ["./middleware/*"],
+      "@utils/*": ["./utils/*"],
+      "@types/*": ["./types/*"],
+      "@config/*": ["./config/*"]
     },
-    // ADD THIS SECTION: Explicitly list the types to be included
     "types": [
-      "node", // ESSENTIAL for 'process', 'console', 'Error.captureStackTrace'
+      "node",
       "express",
       "mongoose",
       "jsonwebtoken",
