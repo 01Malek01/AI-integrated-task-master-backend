@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User, { IUserDocument } from "../models/User.js";
 import { Request, Response, NextFunction } from "express";
 import generateToken from "../utils/generateToken.js";
 import createSendCookie from "../utils/createSendCookie.js";
@@ -52,18 +52,19 @@ export const register = catchAsync(async (req: Request, res: Response, next: Nex
     }
 
     // 3) Create new user first to get the MongoDB _id
-    const user = await User.create({
+    const user: IUserDocument = await User.create({
         username,
         email,
         password
-    }) as IUser & { _id: any };  // Type assertion to include _id
+    });
 
     // 4) Create Stripe customer and link to the user
     const customer = await stripe.customers.create({
         email,
         name: username,
         metadata: {
-            userId: user._id.toString()
+            //@ts-ignore
+            userId: user._id.toString() 
         }
     });
 

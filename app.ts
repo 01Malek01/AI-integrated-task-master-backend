@@ -91,7 +91,6 @@ app.use('/api/auth/register', limiter);
   // Routes
 app.use('/api', routeAggregator);
 
-//@ts-expect-error
 app.use('/health',(_req:Request, res:Response) => res.send('ok'));
 // 404 handler
 app.use((_req: Request, res: Response) => {
