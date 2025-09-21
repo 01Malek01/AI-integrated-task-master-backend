@@ -8,11 +8,13 @@ import { Router } from "express";
 import { protect } from "../middleware/protect.js";
 import { validateRequest } from "../middleware/validation.js";
 import { body } from "express-validator";
+import checkProSubscription from "@/middleware/checkSubscription.js";
 
 const router = Router();
 
 // Apply protect middleware to all routes
 router.use(protect);
+router.use(checkProSubscription);
 
 // Summarize text
 router.post(

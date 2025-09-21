@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
-    "lib": ["ES2020"],
+    "lib": ["ES2022"], // Keep this for standard JS features
     "allowJs": true,
     "outDir": "./dist",
     "rootDir": "./",
@@ -19,12 +19,22 @@
     "paths": {
       "*": ["node_modules/*"],
       "@/*": ["./*"]
-    }
+    },
+    // ADD THIS SECTION: Explicitly list the types to be included
+    "types": [
+      "node", // ESSENTIAL for 'process', 'console', 'Error.captureStackTrace'
+      "express",
+      "mongoose",
+      "jsonwebtoken",
+      "nodemailer",
+      "express-validator"
+      // Add any other global types or library types that consistently throw TS2307
+    ]
   },
   "include": [
-    "*.ts",
-    "controllers/*.ts",
-    "**/*.ts"
+    // This is broad. If server.ts is in the root, it will be included.
+    // If your main code is in a 'src' folder, you might change rootDir and include: ["src/**/*.ts"]
+    "**/*.ts" // This covers "*.ts" and "controllers/*.ts" implicitly
   ],
   "exclude": [
     "node_modules",

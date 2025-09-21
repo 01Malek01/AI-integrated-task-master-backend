@@ -11,7 +11,7 @@ const router = express.Router();
 // API routes
 router.use('/auth', AuthRoutes);
 router.use('/users', UserRoutes);
-router.use('/ai', AIRoutes);
+router.use('/ai',AIRoutes);
 router.use('/notes', NoteRoutes);
 router.use('/tasks', TaskRoutes);
 router.use('/subscription', SubscriptionRoutes);
