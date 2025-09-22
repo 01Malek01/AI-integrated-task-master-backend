@@ -1,5 +1,7 @@
 # ========== Build Stage ==========
 FROM node:20-alpine AS builder
+
+
 WORKDIR /app
 
 # Copy package files and install dependencies
@@ -13,6 +15,7 @@ RUN npm run build
 
 # ========== Production Stage ==========
 FROM node:20-alpine AS production
+
 WORKDIR /app
 
 # Set NODE_ENV to production
