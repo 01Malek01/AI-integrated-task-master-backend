@@ -50,15 +50,10 @@ const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, origin?: string | boolean) => void) => {
     // For development, allow requests from localhost:3000 with or without trailing slash
     const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:3000/',
     process.env.FRONTEND_URL,
     ];
     
     // In production, add your production domain here
-    if (process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL) {
-      allowedOrigins.push(process.env.FRONTEND_URL);
-    }
 
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
