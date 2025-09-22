@@ -36,18 +36,18 @@ USER node
 CMD ["node", "dist/server.js"]
 
 # ========== Development Stage ==========
-FROM node:20-alpine AS development
-WORKDIR /app
+# FROM node:20-alpine AS development
+# WORKDIR /app
 
-# Copy package files and install all dependencies
-COPY package*.json ./
-RUN npm install
+# # Copy package files and install all dependencies
+# COPY package*.json ./
+# RUN npm install
 
-# Copy source code
-COPY . .
+# # Copy source code
+# COPY . .
 
-# Expose port
-EXPOSE 5000
+# # Expose port
+# EXPOSE 5000
 
-# Command to run the application with tsx watch
-CMD ["npm", "run", "dev"]
+# # Command to run the application with tsx watch
+# CMD ["npm", "run", "dev"]
