@@ -1,35 +1,64 @@
 # ========== Build Stage ==========
 FROM node:20-alpine AS builder
 
-
 WORKDIR /app
+
+# Debug: Show current directory contents
+RUN ls -la
 
 # Copy package files and install dependencies
 COPY package*.json ./
 COPY tsconfig*.json ./
+
+# Debug: Show files after copying package files
+RUN ls -la
+
+# Install dependencies first for better caching
 RUN npm ci
 
-# Copy source code and build
+# Copy source code
 COPY . .
-RUN npm run build
+
+# Debug: Show files after copying source code
+RUN ls -la
+
+# Build the application and verify the dist directory
+RUN npm run build && \
+    echo "Build completed. Contents of /app:" && \
+    ls -la && \
+    echo "Contents of /app/dist:" && \
+    ls -la dist/ || echo "dist directory not found!"
 
 # ========== Production Stage ==========
-FROM node:20-alpine AS production
+FROM node:20-alpine
 
 WORKDIR /app
 
 # Set NODE_ENV to production
 ENV NODE_ENV=production
 
-# Install production dependencies only
-COPY --from=builder /app/package*.json ./
+# Copy package files and install only production dependencies
+COPY package*.json ./
 RUN npm ci --only=production
 
-# Copy built files from builder
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/.env* ./
+# Debug: Show what's being copied from builder
+RUN echo "Copying from builder..." && \
+    ls -la /app/dist 2>/dev/null || echo "No dist directory in builder yet"
 
-# Expose the app port
+# Create dist directory first to ensure it exists
+RUN mkdir -p /app/dist
+
+# Copy built files from builder
+COPY --from=builder /app/dist/ ./dist/
+
+# Debug: Verify files were copied
+RUN echo "After copying from builder:" && \
+    ls -la /app/dist/ 2>/dev/null || echo "Failed to copy dist directory"
+
+# Copy environment files if they exist
+RUN if [ -f /app/.env ]; then cp /app/.env .; fi
+
+# Expose the app port (5000 is the default in your server.ts)
 EXPOSE 5000
 
 # Set the user to node for better security

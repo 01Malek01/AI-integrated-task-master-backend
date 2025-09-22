@@ -10,7 +10,6 @@ docker-compose*
 *.md
 *.log
 coverage
-dist
 **/__tests__
 **/*.test.*
 **/*.spec.*
