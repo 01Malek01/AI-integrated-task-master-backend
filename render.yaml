@@ -6,12 +6,11 @@ services:
     plan: free # Or 'starter'/'standard' for production
     dockerContext: .
     dockerfilePath: Dockerfile
-    dockerCommand: "npm run start"
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 10000
+        value: 5000
       - key: MONGODB_URI
         fromDatabase:
           name: tasks-master-db
