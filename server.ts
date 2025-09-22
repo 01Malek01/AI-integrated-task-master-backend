@@ -11,14 +11,43 @@ import './lib/CheckAvailableModels.js';
 // Load environment variables
 dotenv.config();
 const server = createServer(app);
-//init socket.io
-export const io = new Server(server,{
-  cors : {
-    origin : process.env.FRONTEND_URL,
-    credentials : true,
-    methods : ['GET', 'POST'],
+// Initialize socket.io with CORS configuration
+export const io = new Server(server, {
+  cors: {
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      const allowedOrigins = process.env.ALLOWED_ORIGINS 
+        ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+        : [
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://127.0.0.1:3000',
+            'http://127.0.0.1:3001',
+            process.env.FRONTEND_URL
+          ].filter(Boolean);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error(`Socket.IO CORS error: ${origin} not allowed`);
+        callback(new Error('Not allowed by CORS'), false);
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+  },
+  cookie: {
+    name: 'io',
+    httpOnly: true,
+    path: '/',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 1 week
   }
-})
+});
 // listen for connection
 io.on("connection", (socket) => {
   console.log("a user connected",  socket.id);

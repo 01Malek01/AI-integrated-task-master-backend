@@ -28,14 +28,22 @@ const createSendCookie = ({
     sendResponse = false,
     responseData = {}
 }: SendCookieParams) => {
+    const isProduction = process.env.NODE_ENV === "production";
     const defaultOptions: CookieOptions = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        secure: isProduction, // Must be true in production for HTTPS
+        sameSite: isProduction ? 'none' : 'lax', // Must be 'none' for cross-site cookies in production
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
         path: "/",
-        domain: process.env.NODE_ENV === "development" ? 'localhost' : undefined
+        // In production, don't set domain to allow cookies to work on all subdomains
+        // In development, we need to set it to undefined to work with localhost
+        domain: isProduction ? undefined : undefined
     };
+    
+    // Log cookie options for debugging
+    if (process.env.NODE_ENV === 'development') {
+        console.log('Cookie options:', JSON.stringify(defaultOptions, null, 2));
+    }
 
     // Merge default options with provided options
     const cookieOptions = { ...defaultOptions, ...options };

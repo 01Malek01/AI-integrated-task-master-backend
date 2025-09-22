@@ -47,34 +47,34 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // CORS configuration
 const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, origin?: string | boolean) => void) => {
-    // For development, allow requests from localhost:3000 with or without trailing slash
-    const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    ];
-    
-    // In production, add your production domain here
-
+  origin: (origin: string | undefined, callback: (err: Error | null, origin?: boolean) => void) => {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+    // Get allowed origins from environment variable or use default development origins
+    const allowedOrigins = process.env.ALLOWED_ORIGINS 
+      ? process.env.ALLOWED_ORIGINS.split(',').map((o: string) => o.trim())
+      : [
+          'http://localhost:3000',
+          'http://localhost:3001',
+          'http://127.0.0.1:3000',
+          'http://127.0.0.1:3001',
+          process.env.FRONTEND_URL
+        ].filter(Boolean) as string[];
+
+    // Check if the origin is allowed
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.error(`CORS error: ${origin} not allowed`);
+      callback(new Error('Not allowed by CORS'), false);
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  exposedHeaders: ['Set-Cookie'],
-  optionsSuccessStatus: 200,
-  cookie: {
-    httpOnly: true,
-    secure:  process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge: 60 * 60 * 24 * 7 // 1 week
-  }
+  exposedHeaders: ['Set-Cookie', 'Authorization'],
+  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
