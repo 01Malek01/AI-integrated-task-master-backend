@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 import { globalErrorHandler } from './utils/errorHandler.js';
 import rateLimit from 'express-rate-limit';
 import Stripe from 'stripe';
-import routeAggregator from './routes/index.js';
+import routeAggregator from './routes/Index.js';
 // Load environment variables
 dotenv.config();
 
