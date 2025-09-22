@@ -14,8 +14,8 @@ dotenv.config();
 // Create Express app
 const app = express();
 
-
-
+// Trust first proxy (for rate limiting behind reverse proxy like Nginx)
+app.set('trust proxy', 1);
 
 //stripe config
 export const stripe = new Stripe(process.env.STRIPE_API_SECRET as string);
