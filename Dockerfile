@@ -6,10 +6,12 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig*.json ./
 RUN npm ci
+RUN npm i typescript -g
 
 # Copy source code and build
 COPY . .
-RUN npm run build
+# RUN npm run build
+RUN tsc
 
 # ========== Production Stage ==========
 FROM node:20-alpine AS production
@@ -18,9 +20,10 @@ WORKDIR /app
 # Set NODE_ENV to production
 ENV NODE_ENV=production
 
+
 # Install production dependencies only
 COPY --from=builder /app/package*.json ./
-RUN npm ci --only=production
+RUN npm ci 
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
